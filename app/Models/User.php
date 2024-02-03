@@ -51,11 +51,11 @@ class User extends Authenticatable
 
     public function permissions()
     {
-        return $this->role->permissions->pluck('name');
+        return $this->role->permissions();
     }
 
     public function hasAccess($access)
     {
-        return $this->permissions->contains($access);
+        return $this->permissions->pluck('name')->contains($access);
     }
 }
