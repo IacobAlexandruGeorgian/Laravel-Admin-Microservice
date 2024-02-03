@@ -5,6 +5,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -41,20 +43,20 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::put('users/{id}', [UserController::class, 'update']);
     Route::delete('users/{id}', [UserController::class, 'destroy']);
 
-    Route::get('roles', [UserController::class, 'index']);
-    Route::get('roles/{id}', [UserController::class, 'show']);
-    Route::post('roles', [UserController::class, 'store']);
-    Route::put('roles/{id}', [UserController::class, 'update']);
-    Route::delete('roles/{id}', [UserController::class, 'destroy']);
+    Route::get('roles', [RoleController::class, 'index']);
+    Route::get('roles/{id}', [RoleController::class, 'show']);
+    Route::post('roles', [RoleController::class, 'store']);
+    Route::put('roles/{id}', [RoleController::class, 'update']);
+    Route::delete('roles/{id}', [RoleController::class, 'destroy']);
 
-    Route::get('products', [UserController::class, 'index']);
-    Route::get('products/{id}', [UserController::class, 'show']);
-    Route::post('products', [UserController::class, 'store']);
-    Route::put('products/{id}', [UserController::class, 'update']);
-    Route::delete('products/{id}', [UserController::class, 'destroy']);
+    Route::get('products', [ProductController::class, 'index']);
+    Route::get('products/{id}', [ProductController::class, 'show']);
+    Route::post('products', [ProductController::class, 'store']);
+    Route::put('products/{id}', [ProductController::class, 'update']);
+    Route::delete('products/{id}', [ProductController::class, 'destroy']);
 
-    Route::get('orders', [UserController::class, 'index']);
-    Route::get('orders/{id}', [UserController::class, 'show']);
+    Route::get('orders', [OrderController::class, 'index']);
+    Route::get('orders/{id}', [OrderController::class, 'show']);
 
     Route::get('permissions', [PermissionController::class, 'index']);
 });
