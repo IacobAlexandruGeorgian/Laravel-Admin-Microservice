@@ -17,7 +17,7 @@ class ProductController extends Controller
     {
         Gate::authorize('view', 'products');
 
-        $products = Product::Paginate();
+        $products = Product::Paginate(10);
 
         return ProductResource::collection($products);
     }
