@@ -14,7 +14,7 @@ class OrderController extends Controller
     {
         Gate::authorize('view', 'orders');
 
-        $orders = Order::Paginate();
+        $orders = Order::paginate(10);
 
         return OrderResource::collection($orders);
     }
