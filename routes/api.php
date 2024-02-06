@@ -1,14 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ImageController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ImageController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Influencer\ProductController as InfluencerProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,13 +26,15 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
 Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('user', [AuthController::class, 'user']);
+    Route::put('users/info', [AuthController::class, 'updateInfo']);
+    Route::put('users/password', [AuthController::class, 'updatePassword']);
+});
+
+Route::group(['middleware' => ['auth:api', 'scope:admin'], 'prefix' => 'admin'], function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::get('chart', [DashboardController::class, 'chart']);
-
-    Route::get('user', [UserController::class, 'user']);
-    Route::put('users/info', [UserController::class, 'info']);
-    Route::put('users/password', [UserController::class, 'updatePassword']);
 
     Route::post('upload', [ImageController::class, 'upload']);
     Route::get('export', [OrderController::class, 'export']);
@@ -59,4 +61,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('orders/{id}', [OrderController::class, 'show']);
 
     Route::get('permissions', [PermissionController::class, 'index']);
+});
+
+Route::group(['prefix' => 'influencer'], function () {
+    Route::get('products', [InfluencerProductController::class, 'index']);
+
+    Route::group(['middlewre' => ['auth:api', 'scope:influencer']], function () {
+        
+    });
 });

@@ -46,7 +46,7 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->hasOneThrough(Role::class, UserRole::class, 'user_id', 'id', 'id', 'role_id');
     }
 
     public function permissions()
@@ -57,5 +57,15 @@ class User extends Authenticatable
     public function hasAccess($access)
     {
         return $this->permissions->pluck('name')->contains($access);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->is_influencer == 0;
+    }
+
+    public function isInfluencer(): bool
+    {
+        return $this->is_influencer == 1;
     }
 }
