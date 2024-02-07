@@ -17,9 +17,17 @@ class Order extends Model
     public function getTotalAttribute()
     {
         return $this->orderItems->sum(function (OrderItem $item) {
-            return $item->price * $item->quantity;
+            return $item->admin_revenue;
         });
     }
+
+    public function getInfluencerAttribute()
+    {
+        return $this->orderItems->sum(function (OrderItem $item) {
+            return $item->influencer_revenue;
+        });
+    }
+
 
     public function getNameAttribute()
     {

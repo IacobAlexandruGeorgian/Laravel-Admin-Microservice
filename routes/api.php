@@ -8,7 +8,11 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Checkout\LinkController as CheckoutLinkController;
+use App\Http\Controllers\Checkout\OrderController as CheckoutOrderController;
+use App\Http\Controllers\Influencer\LinkController;
 use App\Http\Controllers\Influencer\ProductController as InfluencerProductController;
+use App\Http\Controllers\Influencer\StatsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -67,6 +71,14 @@ Route::group(['prefix' => 'influencer'], function () {
     Route::get('products', [InfluencerProductController::class, 'index']);
 
     Route::group(['middlewre' => ['auth:api', 'scope:influencer']], function () {
-        
+        Route::post('links', [LinkController::class, 'store']);
+        Route::get('stats', [StatsController::class, 'index']);
+        Route::get('rankings', [StatsController::class, 'rankings']);
     });
+});
+
+Route::group(['prefix' => 'checkout'], function () {
+    Route::get('links/{code}', [CheckoutLinkController::class, 'show']);
+    Route::Post('orders', [CheckoutOrderController::class, 'store']);
+    Route::Post('orders/confirm', [CheckoutOrderController::class, 'confirm']);
 });
