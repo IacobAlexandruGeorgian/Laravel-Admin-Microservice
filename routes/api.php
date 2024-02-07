@@ -26,51 +26,58 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('login', [AuthController::class, 'login']);
-Route::post('register', [AuthController::class, 'register']);
+Route::prefix('admin')->group(function () {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
 
-Route::group(['middleware' => 'auth:api'], function () {
-    Route::get('user', [AuthController::class, 'user']);
-    Route::put('users/info', [AuthController::class, 'updateInfo']);
-    Route::put('users/password', [AuthController::class, 'updatePassword']);
-});
+    Route::group(['middleware' => ['auth:api', 'scope:admin']], function () {
+        Route::get('user', [AuthController::class, 'user']);
+        Route::put('users/info', [AuthController::class, 'updateInfo']);
+        Route::put('users/password', [AuthController::class, 'updatePassword']);
 
-Route::group(['middleware' => ['auth:api', 'scope:admin'], 'prefix' => 'admin'], function () {
-    Route::post('logout', [AuthController::class, 'logout']);
+        Route::post('logout', [AuthController::class, 'logout']);
 
-    Route::get('chart', [DashboardController::class, 'chart']);
+        Route::get('chart', [DashboardController::class, 'chart']);
 
-    Route::post('upload', [ImageController::class, 'upload']);
-    Route::get('export', [OrderController::class, 'export']);
+        Route::post('upload', [ImageController::class, 'upload']);
+        Route::get('export', [OrderController::class, 'export']);
 
-    Route::get('users', [UserController::class, 'index']);
-    Route::get('users/{id}', [UserController::class, 'show']);
-    Route::post('users', [UserController::class, 'store']);
-    Route::put('users/{id}', [UserController::class, 'update']);
-    Route::delete('users/{id}', [UserController::class, 'destroy']);
+        Route::get('users', [UserController::class, 'index']);
+        Route::get('users/{id}', [UserController::class, 'show']);
+        Route::post('users', [UserController::class, 'store']);
+        Route::put('users/{id}', [UserController::class, 'update']);
+        Route::delete('users/{id}', [UserController::class, 'destroy']);
 
-    Route::get('roles', [RoleController::class, 'index']);
-    Route::get('roles/{id}', [RoleController::class, 'show']);
-    Route::post('roles', [RoleController::class, 'store']);
-    Route::put('roles/{id}', [RoleController::class, 'update']);
-    Route::delete('roles/{id}', [RoleController::class, 'destroy']);
+        Route::get('roles', [RoleController::class, 'index']);
+        Route::get('roles/{id}', [RoleController::class, 'show']);
+        Route::post('roles', [RoleController::class, 'store']);
+        Route::put('roles/{id}', [RoleController::class, 'update']);
+        Route::delete('roles/{id}', [RoleController::class, 'destroy']);
 
-    Route::get('products', [ProductController::class, 'index']);
-    Route::get('products/{id}', [ProductController::class, 'show']);
-    Route::post('products', [ProductController::class, 'store']);
-    Route::put('products/{id}', [ProductController::class, 'update']);
-    Route::delete('products/{id}', [ProductController::class, 'destroy']);
+        Route::get('products', [ProductController::class, 'index']);
+        Route::get('products/{id}', [ProductController::class, 'show']);
+        Route::post('products', [ProductController::class, 'store']);
+        Route::put('products/{id}', [ProductController::class, 'update']);
+        Route::delete('products/{id}', [ProductController::class, 'destroy']);
 
-    Route::get('orders', [OrderController::class, 'index']);
-    Route::get('orders/{id}', [OrderController::class, 'show']);
+        Route::get('orders', [OrderController::class, 'index']);
+        Route::get('orders/{id}', [OrderController::class, 'show']);
 
-    Route::get('permissions', [PermissionController::class, 'index']);
+        Route::get('permissions', [PermissionController::class, 'index']);
+    });
 });
 
 Route::group(['prefix' => 'influencer'], function () {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
+
     Route::get('products', [InfluencerProductController::class, 'index']);
 
     Route::group(['middlewre' => ['auth:api', 'scope:influencer']], function () {
+        Route::get('user', [AuthController::class, 'user']);
+        Route::put('users/info', [AuthController::class, 'updateInfo']);
+        Route::put('users/password', [AuthController::class, 'updatePassword']);
+
         Route::post('links', [LinkController::class, 'store']);
         Route::get('stats', [StatsController::class, 'index']);
         Route::get('rankings', [StatsController::class, 'rankings']);

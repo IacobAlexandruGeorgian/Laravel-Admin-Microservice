@@ -17,12 +17,14 @@ services:
       DB_DATABSE: admin
       DB_USERNAME: admin1
       DB_PASSWORD: admin1
+      REDIS_HOST: redis
     ports:
       - 8000:8000
     volumes:
       - .:/app
     depends_on:
       - db
+      - redis
     networks:
       - app
 
@@ -40,6 +42,9 @@ services:
       - 33066:3306
     networks:
       - app
+
+  redis:
+    image: redis:latest
 
   phpmyadmin:
     image: phpmyadmin:latest
