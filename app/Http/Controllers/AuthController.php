@@ -17,7 +17,7 @@ class AuthController
 {
     public function login(Request $request)
     {
-        if(Auth::attempt($request->only('email', 'password'))) {
+        if (Auth::attempt($request->only('email', 'password'))) {
             $user = Auth::user();
 
             $scope = $request->input('scope');
@@ -55,10 +55,10 @@ class AuthController
     {
         $user = User::create(
             $request->only('first_name', 'last_name', 'email')
-            + [
-                'password' => Hash::make($request->input('password')),
-                'is_influencer' => 1
-            ]
+                + [
+                    'password' => Hash::make($request->input('password')),
+                    'is_influencer' => 1
+                ]
         );
 
         return response($user, Response::HTTP_CREATED);
@@ -66,7 +66,7 @@ class AuthController
 
     public function user()
     {
-        $user = Auth::user();
+        $user = Auth::guard('api')->user();
 
         $resource = new UserResource($user);
 

@@ -6,6 +6,7 @@ use App\Http\Resources\LinkResource;
 use App\Models\Link;
 use App\Models\LinkProduct;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class LinkController
@@ -13,7 +14,7 @@ class LinkController
     public function store(Request $request)
     {
         $link = Link::create([
-            'user_id' => $request->user()->id,
+            'user_id' => Auth::guard('api')->user()->id,
             'code' => Str::random(6)
         ]);
 
