@@ -21,7 +21,7 @@ class Order extends Model
         });
     }
 
-    public function getInfluencerAttribute()
+    public function getInfluencerTotalAttribute()
     {
         return $this->orderItems->sum(function (OrderItem $item) {
             return $item->influencer_revenue;
