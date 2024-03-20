@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('QUEUE_CONNECTION', 'sync'),
+    'default' => env('QUEUE_CONNECTION', 'rabbitmq'),
 
     /*
     |--------------------------------------------------------------------------
@@ -70,6 +70,23 @@ return [
             'block_for' => null,
             'after_commit' => false,
         ],
+
+        'rabbitmq' => [
+
+            'driver' => 'rabbitmq',
+            'hosts' => [
+                [
+                    'host' => env('RABBITMQ_HOST', 'sparrow-01.rmq.cloudamqp.com'),
+                    'port' => env('RABBITMQ_PORT', 5672),
+                    'user' => env('RABBITMQ_USER', 'qjwywhck'),
+                    'password' => env('RABBITMQ_PASSWORD', '7a2HPUSNaymwIid30Gs1byxa3cKC3lY7'),
+                    'vhost' => env('RABBITMQ_VHOST', 'qjwywhck'),
+                ],
+                // ...
+            ],
+
+            // ...
+         ],
 
     ],
 
