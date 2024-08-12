@@ -27,13 +27,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('admin')->group(function () {
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('register', [AuthController::class, 'register']);
 
-    Route::group(['middleware' => ['auth:api', 'scope:admin']], function () {
-        Route::get('user', [AuthController::class, 'user']);
-        Route::put('users/info', [AuthController::class, 'updateInfo']);
-        Route::put('users/password', [AuthController::class, 'updatePassword']);
+    Route::get('user', [AuthController::class, 'user']);
+
+    Route::group(['middleware' => 'scope.admin'], function () {
 
         Route::post('logout', [AuthController::class, 'logout']);
 
@@ -73,7 +70,7 @@ Route::group(['prefix' => 'influencer'], function () {
 
     Route::get('products', [InfluencerProductController::class, 'index']);
 
-    Route::group(['middlewre' => ['auth:api', 'scope:influencer']], function () {
+    Route::group(['middlewre' => 'scope.influencer'], function () {
         Route::get('user', [AuthController::class, 'user']);
         Route::put('users/info', [AuthController::class, 'updateInfo']);
         Route::put('users/password', [AuthController::class, 'updatePassword']);
