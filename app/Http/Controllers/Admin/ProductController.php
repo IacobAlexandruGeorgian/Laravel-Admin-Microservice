@@ -11,12 +11,20 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use App\Services\UserService;
 
 class ProductController
 {
+    private $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function index()
     {
-        Gate::authorize('view', 'products');
+        $this->userService->allows('view', 'products');
 
         $products = Product::Paginate(10);
 
@@ -25,14 +33,14 @@ class ProductController
 
     public function show($id)
     {
-        Gate::authorize('view', 'products');
+        $this->userService->allows('view', 'products');
 
         return new ProductResource(Product::find($id));
     }
 
     public function store(ProductCreateRequest $request)
     {
-        Gate::authorize('edit', 'products');
+        $this->userService->allows('edit', 'products');
 
         $product = Product::create($request->only('title', 'description', 'image', 'price'));
 
@@ -43,7 +51,7 @@ class ProductController
 
     public function update(ImageUploadRequest $request, $id)
     {
-        Gate::authorize('edit', 'products');
+        $this->userService->allows('edit', 'products');
 
         $product = Product::find($id);
 
@@ -56,7 +64,7 @@ class ProductController
 
     public function destroy($id)
     {
-        Gate::authorize('edit', 'products');
+        $this->userService->allows('edit', 'products');
 
         Product::destroy($id);
 

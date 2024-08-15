@@ -2,51 +2,50 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Events\AdminAddedEvent;
-use App\Http\Requests\UpdateInfoRequest;
-use App\Http\Requests\UpdatePasswordRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Jobs\AdminAdded;
 use App\Models\User;
 use App\Models\UserRole;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use App\Services\UserService;
+use Illuminate\Http\Request;
 
 class UserController
 {
-    public function index()
+    private $userService;
+
+    public function __construct(UserService $userService)
     {
-        Gate::authorize('view', 'users');
+        $this->userService = $userService;
+    }
 
-        $users = User::paginate(10);
+    public function index(Request $request)
+    {
+        $this->userService->allows('view', 'users');
 
-        return UserResource::collection($users);
+        return $this->userService->all($request->input('page', 1));
     }
 
     public function show($id)
     {
-        Gate::authorize('view', 'users');
+        $this->userService->allows('view', 'users');
 
-        $user = User::find($id);
+        $user = $this->userService->get($id);
 
         return new UserResource($user);
     }
 
     public function store(UserCreateRequest $request)
     {
-        Gate::authorize('edit', 'users');
+        $this->userService->allows('edit', 'users');
 
-        $user = User::create([
-            'first_name' => $request->input('first_name'),
-            'last_name' => $request->input('last_name'),
-            'email' => $request->input('email'),
-            'password' => Hash::make(1234)
-        ]);
+        $data = $request->only('first_name', 'last_name', 'email') + ['password' => 1234];
+
+        $user = $this->userService->create($data);
 
         UserRole::create([
             'user_id' => $user->id,
@@ -60,7 +59,9 @@ class UserController
 
     public function update(UserUpdateRequest $request, $id)
     {
-        Gate::authorize('edit', 'users');
+        $this->userService->allows('edit', 'users');
+
+        $user = $this->userService->update($id, $request->only('first_name', 'last_name', 'email'));
 
         $user = User::find($id);
 
@@ -78,9 +79,9 @@ class UserController
 
     public function destroy($id)
     {
-        Gate::authorize('edit', 'users');
+        $this->userService->allows('edit', 'users');
 
-        User::destroy($id);
+        $this->userService->delete($id);
 
         return response(null, Response::HTTP_NO_CONTENT);
     }

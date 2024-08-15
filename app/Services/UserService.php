@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Gate;
 
 class UserService
 {
@@ -16,27 +17,61 @@ class UserService
         ];
     }
 
+    public function request()
+    {
+        return Http::withHeaders($this->headers());
+    }
+
     public function getUser()
     {
-        $json = Http::withHeaders($this->headers())->get("{$this->endpoint}/user")->json();
+        $json = $this->request()->get("{$this->endpoint}/user")->json();
 
-        $user = new User();
-        $user->id = $json['id'];
-        $user->first_name = $json['first_name'];
-        $user->last_name = $json['last_name'];
-        $user->email = $json['email'];
-        $user->is_influencer = $json['is_influencer'];
-
-        return $user;
+        return new User($json);
     }
 
     public function isAdmin()
     {
-        return Http::withHeaders($this->headers())->get("{$this->endpoint}/admin")->successful();
+        return $this->request()->get("{$this->endpoint}/admin")->successful();
     }
 
     public function isInfluencer()
     {
-        return Http::withHeaders($this->headers())->get("{$this->endpoint}/influencer")->successful();
+        return $this->request()->get("{$this->endpoint}/influencer")->successful();
+    }
+
+    public function allows($ability, $arguments)
+    {
+        return Gate::forUser($this->getUser())->authorize($ability, $arguments);
+    }
+
+    public function all($page)
+    {
+        return $this->request()->get("{$this->endpoint}/users?page={$page}")->json();
+    }
+
+    public function get($id): User
+    {
+        $json = $this->request()->get("{$this->endpoint}/users/{$id}")->json();
+
+        return new User($json);
+    }
+
+    public function create($data)
+    {
+        $json = $this->request()->post("{$this->endpoint}/users", $data)->json();
+
+        return new User($json);
+    }
+
+    public function update($id, $data)
+    {
+        $json = $this->request()->put("{$this->endpoint}/users/{$id}", $data)->json();
+
+        return new User($json);
+    }
+
+    public function delete($id)
+    {
+        return $this->request()->delete("{$this->endpoint}/users/{$id}")->successful();
     }
 }
